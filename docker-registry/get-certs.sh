@@ -5,7 +5,7 @@ echo "Sur la machine du registry, taper:"
 echo "nc -v {ip-client} 4444 < certs/registry.local.crt"
 echo "This machine's IPs :"
 ip a | grep "inet "
-bash -i -c "nc -lv -w 2 -p 4444 > certs.crt -e true"
+nc -lv -p 4444 > certs.crt -q 1
 
 # Trust certificate
 sudo apt install ca-certificates
