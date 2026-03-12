@@ -5,9 +5,8 @@ mkdir ./certs
 sudo apt install -y apache2-utils
 
 # Create login credentials
-read -p "username > " username
-read -p "password > " password
-htpasswd -Bbn $username $password > ./registry/registry.password
+# Please setup $user and $psswd beforehand
+htpasswd -Bbn $user $psswd > ./registry/registry.password
 
 # Create a self-signed certificate
 openssl req -x509 -nodes -days 365 -newkey rsa:4096 \
