@@ -1,0 +1,24 @@
+services:
+  registry:
+    image: registry:latest
+    environment:
+      # Login
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/registry.password
+      REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /data
+      
+      # TLS Cert
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/registry.local.crt
+      REGISTRY_HTTP_TLS_KEY: /certs/registry.local.key
+      
+      # Prevent log export attempts
+      REGISTRY_LOG_LEVEL: info
+      OTEL_TRACES_EXPORTER: none
+
+    volumes:
+      - ./registry/registry.password:/auth/registry.password
+      - ./registry/data:/data
+      - ./certs:/certs
+    ports:
+      - 5000:5000
