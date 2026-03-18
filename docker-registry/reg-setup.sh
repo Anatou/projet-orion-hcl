@@ -6,8 +6,8 @@ sudo apt install -y apache2-utils
 
 # Create login credentials
 # Please setup $user and $psswd beforehand
-if [[ ! -n "$user" ]]; then echo "No username set! please setup \$user before running this script !"; exit; fi 
-if [[ ! -n "$psswd" ]]; then echo "No password set! please setup \$psswd before running this script !"; exit; fi 
+if [[ -n "$user" ]]; then echo "No username set! please setup \$user before running this script !"; exit; fi 
+if [[ -n "$psswd" ]]; then echo "No password set! please setup \$psswd before running this script !"; exit; fi 
 
 htpasswd -Bbn $user $psswd > ./registry/registry.password
 

@@ -4,9 +4,7 @@ Fichiers concernant la mise en place du registry docker local au SI.
 
 Mettre en place le registry: sur le serveur docker
 ```shell
-user=user
-psswd=password
-wget -O - http://tiny.cc/in80101/reg-setup.sh | bash
+wget -O - http://tiny.cc/in80101/reg-setup.sh | user=user psswd=password bash
 # Long version: https://github.com/Anatou/projet-orion-hcl/raw/refs/heads/main/docker-registry/reg-setup.sh
 ```
 
