@@ -1,0 +1,77 @@
+services:
+
+  sqldb:
+    image: registry.local:5000/mysql:8.3
+    volumes:
+      - mysql:/var/lib/mysql
+      - ./database/docker/provision/create_databases.sh:/docker-entrypoint-initdb.d/create_databases.sh
+    environment:
+      - MYSQL_DATABASE=${KIMAI_DATABASE}
+      - MYSQL_USER=${DATABASE_USER}
+      - MYSQL_PASSWORD=${DATABASE_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${OPENEMR_DATABASE_ROOT_PASSWORD}
+      - OPENEMR_DATABASE=${OPENEMR_DATABASE}
+    command: --default-storage-engine innodb --mysql-native-password=ON --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    healthcheck:
+      test: mysqladmin -p$$MYSQL_ROOT_PASSWORD ping -h localhost
+      interval: 20s
+      start_period: 10s
+      timeout: 10s
+      retries: 3
+
+  kimai:
+    image: registry.local:5000/kimai2:apache
+    volumes:
+      - data:/opt/kimai/var/data
+      - plugins:/opt/kimai/var/plugins
+    ports:
+      - 8001:8001
+    environment:
+      - ADMINMAIL=${KIMAI_EMAIL}
+      - ADMINPASS=${KIMAI_PASSWORD}
+      - "DATABASE_URL=mysql://${DATABASE_USER}:${DATABASE_PASSWORD}@sqldb/${KIMAI_DATABASE}?charset=utf8mb4&serverVersion=8.3.0"
+    restart: unless-stopped
+
+  openEmr:
+    restart: always
+    image: registry.local:5000/openemr:latest
+    ports:
+    - 80:80
+    - 443:443
+    volumes:
+    - logvolume01:/var/log
+    - sitevolume:/var/www/localhost/htdocs/openemr/sites
+    environment:
+      MYSQL_HOST: sqldb
+      MYSQL_ROOT_PASS: ${OPENEMR_DATABASE_ROOT_PASSWORD}
+      MYSQL_USER: ${DATABASE_USER}
+      MYSQL_PASS: ${DATABASE_PASSWORD}
+      MYSQL_DATABASE: ${OPENEMR_DATABASE}
+      OE_USER: ${OPENEMR_USER}
+      OE_PASS: ${OPENEMR_PASS}
+    depends_on:
+      sqldb:
+        condition: service_healthy
+    healthcheck:
+      test:
+      - CMD
+      - /usr/bin/curl
+      - --fail
+      - --insecure
+      - --location
+      - --show-error
+      - --silent
+      - https://localhost/meta/health/readyz
+      start_period: 3m
+      start_interval: 10s
+      interval: 1m
+      timeout: 5s
+      retries: 3
+
+volumes:
+  data:
+  mysql:
+  plugins:
+  logvolume01:
+  sitevolume:
