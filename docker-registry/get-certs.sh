@@ -11,8 +11,4 @@ nc -lv -p 4444 > certs.crt -q 1
 sudo apt install ca-certificates
 sudo cp certs.crt /usr/local/share/ca-certificates
 sudo update-ca-certificates
-if [ "$(id -u)" = "0" ]; then
-	systemctl restart docker
-else
-	systemctl --user restart docker
-fi
+systemctl --user restart docker

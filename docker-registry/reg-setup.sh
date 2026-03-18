@@ -21,13 +21,7 @@ openssl req -x509 -nodes -days 365 -newkey rsa:4096 \
 sudo apt install -y ca-certificates
 sudo cp certs/registry.local.crt /usr/local/share/ca-certificates
 sudo update-ca-certificates
-
-# If root, restart differently
-if [ "$(id -u)" = "0" ]; then
-	systemctl restart docker
-else
-	systemctl --user restart docker
-fi
+sudo systemctl restart docker
 
 wget https://github.com/Anatou/projet-orion-hcl/raw/refs/heads/main/docker-registry/compose.yaml
-docker compose up -d
+sudo docker compose up -d
