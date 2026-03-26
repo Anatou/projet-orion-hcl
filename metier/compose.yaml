@@ -1,7 +1,7 @@
 services:
 
   sqldb:
-    image: registry.local:5000/mysql:8.3
+    image: mysql:8.3
     volumes:
       - mysql:/var/lib/mysql
       - ./database/docker/provision/create_databases.sh:/docker-entrypoint-initdb.d/create_databases.sh
@@ -21,7 +21,7 @@ services:
       retries: 3
 
   kimai:
-    image: registry.local:5000/kimai2:apache
+    image: kimai/kimai2:apache
     volumes:
       - data:/opt/kimai/var/data
       - plugins:/opt/kimai/var/plugins
@@ -35,7 +35,7 @@ services:
 
   openEmr:
     restart: always
-    image: registry.local:5000/openemr:latest
+    image: openemr/openemr:latest
     ports:
     - 8080:80
     - 4443:443
